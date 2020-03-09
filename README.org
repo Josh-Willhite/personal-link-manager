@@ -1,0 +1,18 @@
+* quantified-self
+** first pass accepts a link and some info about the link then writes the info to a json file and publishes to github
+#+begin_src json
+  [
+    {
+        "url": "a valid url",
+        "tags": ["learn", "idea"],
+        "note": "this is a note to my future self",
+        "timestamp": "current time",
+    } 
+  ]
+#+end_src
+* basic auth
+** https://girishjoshi.io/post/implementing-http-basic-authentication-in-golang/
+* Next steps
+** read json data in
+** append to json data and write it back out to disk
+** git pull/push
