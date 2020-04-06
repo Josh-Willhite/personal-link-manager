@@ -36,7 +36,25 @@ func listLinksHandler(w http.ResponseWriter, r *http.Request) {
 		<title>{{.Title}}</title>
 		</head>
 		<body>
-		{{range .Links}}<div><a href={{ .Link }}>{{ .Link }}</a></div>{{else}}<div><strong>no rows</strong></div>{{end}}
+        <table style="width:100%" border="solid">
+        <th>link</th>
+        <th>tags</th>
+        <th>notes</th>
+		{{range .Links}}
+        <tr>
+        <td><a href={{ .Link }}>{{ .Link }}</a></td>
+        <td>{{ .Tags }}</td>
+        <td>{{ .Notes }}</td>
+        </tr>
+        {{else}}
+        <tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+        </tr>
+        {{end}}
+        </table>
 	</body>
 		</html>`
 
