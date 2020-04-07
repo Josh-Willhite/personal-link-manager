@@ -11,6 +11,7 @@
   ]
 #+end_src
 * Next steps
+** get listLinks after successfully adding a new link
 ** landing page
 *** list all links
 **** maybe aggregate into categories
