@@ -87,8 +87,7 @@ func addLinkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeLink(link)
-	// commit and push to github
-	tmpl.Execute(w, struct{ Success bool }{Success: true})
+	http.Redirect(w, r, "http://localhost:8080/listLinks", http.StatusSeeOther)
 }
 
 func writeLink(link LinkDetails) {
