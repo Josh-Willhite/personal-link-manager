@@ -19,3 +19,5 @@
 *** by tag, url, and notes (fuzzy)
 ** basic auth
 *** https://girishjoshi.io/post/implementing-http-basic-authentication-in-golang/
+** delete links
+*** links should be unique, so we should probably store them as a map?
