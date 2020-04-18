@@ -19,3 +19,4 @@
 *** by tag, url, and notes (fuzzy)
 ** basic auth
 *** https://girishjoshi.io/post/implementing-http-basic-authentication-in-golang/
+* switch to map[url]
