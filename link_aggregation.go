@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -19,10 +20,8 @@ type LinkDetails struct {
 }
 
 func main() {
-	links := readLinks()
-	fmt.Println(links)
 	http.HandleFunc("/addLink", addLinkHandler)
-	// http.HandleFunc("/searchLink", linkHandler)
+	http.HandleFunc("/", listLinksHandler)
 	http.HandleFunc("/listLinks", listLinksHandler)
 	http.ListenAndServe(":8080", nil)
 }
@@ -77,6 +76,10 @@ func addLinkHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		tmpl.Execute(w, nil)
 		return
+	}
+	_, err := url.Parse(r.FormValue("link"))
+	if err != nil {
+		fmt.Printf("Failed to add link with: %s", err)
 	}
 
 	link := LinkDetails{
