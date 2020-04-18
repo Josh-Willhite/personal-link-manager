@@ -10,14 +10,19 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
-type LinkDetails struct {
-	Link      string    "json:link"
+type Link struct {
+	UUID      uuid.UUID "json:-"
+	URL       string    "json:link"
 	Tags      []string  "json:tags"
 	Notes     string    "json:notes"
 	Timestamp time.Time "json:timestamp"
 }
+
+// generate a uuid for each link and store in map[UUID]link
 
 func main() {
 	http.HandleFunc("/addLink", addLinkHandler)
@@ -61,7 +66,7 @@ func listLinksHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Title string
-		Links []LinkDetails
+		Links []Link
 	}{
 		Title: "the title",
 		Links: readLinks(),
@@ -82,8 +87,8 @@ func addLinkHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Failed to add link with: %s", err)
 	}
 
-	link := LinkDetails{
-		Link:      r.FormValue("link"),
+	link := Link{
+		URL:       r.FormValue("link"),
 		Tags:      strings.Split(r.FormValue("tags"), ","),
 		Notes:     r.FormValue("notes"),
 		Timestamp: time.Now(),
@@ -93,7 +98,7 @@ func addLinkHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "http://localhost:8080/listLinks", http.StatusSeeOther)
 }
 
-func writeLink(link LinkDetails) {
+func writeLink(link Link) {
 	links := readLinks()
 	links = append(links, link)
 
@@ -107,8 +112,8 @@ func writeLink(link LinkDetails) {
 	}
 }
 
-func readLinks() []LinkDetails {
-	links := []LinkDetails{}
+func readLinks() []Link {
+	links := []Link{}
 	bytes, _ := ioutil.ReadFile("links.json")
 
 	err := json.Unmarshal(bytes, &links)
