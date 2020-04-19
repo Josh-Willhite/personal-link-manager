@@ -21,3 +21,7 @@
 *** https://girishjoshi.io/post/implementing-http-basic-authentication-in-golang/
 ** delete links
 *** links should be unique, so we should probably store them as a map?
+* separate internal vs. external representation
+** internally we use map[url.URL]link
+** externally we use []link
+* 

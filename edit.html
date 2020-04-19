@@ -1,0 +1,11 @@
+<!-- forms.html -->
+<h1>Edit Link</h1>
+<form method="POST">
+    <label>url:</label><br />
+    <input type="text" name="url" value="{{ .URL }}"><br />
+    <label>tags:</label><br />
+    <input type="text" name="tags" value="{{ .TagsText }}"><br />
+    <label>notes:</label><br />
+    <textarea name="notes" value ="{{ .Notes }}"></textarea><br />
+    <input type="submit">
+</form>

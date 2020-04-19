@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{{.Title}}</title>
+</head>
+<body>
+    </table>
+    <form method="POST" action="http://localhost:8080/add">
+        <input type="submit", value="add">
+        <label>url:</label>
+        <input type="text" name="url">
+        <label>tags:</label>
+        <input type="text" name="tags">
+        <label>notes:</label>
+        <textarea name="notes"></textarea>
+    </form>
+    <br>
+    <form method="POST" action="http://localhost:8080/search">
+        <input type="submit", value="search">
+        <input type="text" name="term">
+    </form>
+    <table style="width:100%" border="solid">
+    <th>link</th>
+    <th>actions</th>
+    <th>tags</th>
+    <th>notes</th>
+{{range .Links}}
+    <tr>
+        <td><a href={{ .URL }}>{{ .URL }}</a></td>
+        <td>
+            <a href="http://localhost:8080/delete?url={{ .URL }}">delete</a>
+            <a href="http://localhost:8080/edit?url={{ .URL }}">edit</a>
+        </td>
+        <td>
+        {{range $tag := .Tags}}
+            <a href="http://localhost:8080/search?tag={{ $tag }}">{{ $tag }}</a>
+        {{end}}
+        </td>
+        <td>{{ .Notes }}</td>
+    </tr>
+{{else}}
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+{{end}}
+</body>
+</html>
