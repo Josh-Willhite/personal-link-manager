@@ -40,20 +40,59 @@ func main() {
 }
 
 func (ls linkStore) searchHandler(w http.ResponseWriter, r *http.Request) {
-	tag := r.FormValue("tag")
+	var links []Link
+	query := r.URL.Query()
+	tag := query.Get("tag")
+	terms := query.Get("terms")
+
 	tmpl := template.Must(template.ParseFiles(ls.listHTML))
+
+	if terms != "" {
+		links = ls.searchTerms(strings.Fields(terms))
+	} else if tag != "" {
+		links = ls.searchTags(tag)
+	}
 
 	data := struct {
 		Title string
 		Links []Link
 	}{
 		Title: "the title",
-		Links: ls.searchTags(tag),
+		Links: links,
 	}
 	tmpl.Execute(w, data)
 }
 
-// func (ls linkStore) searchTerms(searchTerms []string) []Link {}
+func (ls linkStore) searchTerms(searchTerms []string) []Link {
+	//brute force term searhc
+	var linkMatch = false
+	var links = []Link{}
+
+	for url, link := range ls.links {
+		linkMatch = false
+	loop:
+		for _, term := range searchTerms {
+			if strings.Contains(url, term) {
+				linkMatch = true
+				break loop
+			}
+			if strings.Contains(link.Notes, term) {
+				linkMatch = true
+				break loop
+			}
+			for _, tag := range link.Tags {
+				if strings.Contains(tag, term) {
+					linkMatch = true
+					break loop
+				}
+			}
+		}
+		if linkMatch {
+			links = append(links, link)
+		}
+	}
+	return links
+}
 
 func (ls linkStore) searchTags(searchTag string) []Link {
 	links := []Link{}
