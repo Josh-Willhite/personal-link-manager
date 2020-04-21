@@ -6,7 +6,7 @@
 </head>
 <body>
     </table>
-    <form method="POST" action="http://localhost:8080/add">
+    <form method="POST" action="{{ .ServiceHome }}/add">
         <input type="submit", value="add">
         <label>url:</label>
         <input type="text" name="url">
@@ -16,7 +16,7 @@
         <textarea name="notes"></textarea>
     </form>
     <br>
-    <form method="GET" action="http://localhost:8080/search">
+    <form method="GET" action="{{ .ServiceHome }}/search">
         <input type="submit", value="search">
         <input type="text" name="terms">
     </form>
@@ -29,12 +29,12 @@
     <tr>
         <td><a href={{ .URL }}>{{ .URL }}</a></td>
         <td>
-            <a href="http://localhost:8080/delete?url={{ .URL }}">delete</a>
-            <a href="http://localhost:8080/edit?url={{ .URL }}">edit</a>
+            <a href="{{ $.ServiceHome }}/delete?url={{ .URL }}">delete</a>
+            <a href="{{ $.ServiceHome }}/edit?url={{ .URL }}">edit</a>
         </td>
         <td>
         {{range $tag := .Tags}}
-            <a href="http://localhost:8080/search?tag={{ $tag }}">{{ $tag }}</a>
+            <a href="{{ $.ServiceHome }}/search?tag={{ $tag }}">{{ $tag }}</a>
         {{end}}
         </td>
         <td>{{ .Notes }}</td>

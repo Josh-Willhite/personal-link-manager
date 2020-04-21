@@ -20,15 +20,23 @@ type Link struct {
 }
 
 type linkStore struct {
-	links    map[string]Link
-	path     string //location on disk
-	listHTML string
-	addHTML  string
-	editHTML string
+	links      map[string]Link
+	path       string //location on disk
+	serviceURL string
+	listHTML   string
+	addHTML    string
+	editHTML   string
 }
 
 func main() {
-	ls := linkStore{path: "links.json", listHTML: "links.html", editHTML: "edit.html", links: map[string]Link{}}
+	ls := linkStore{
+		path:       "links.json",
+		listHTML:   "links.html",
+		editHTML:   "edit.html",
+		links:      map[string]Link{},
+		serviceURL: "http://links.joshwillhite.com",
+	}
+
 	ls.readLinks()
 
 	http.HandleFunc("/", ls.listHandler)
@@ -54,11 +62,13 @@ func (ls linkStore) searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title string
-		Links []Link
+		Title       string
+		Links       []Link
+		ServiceHome string
 	}{
-		Title: "the title",
-		Links: links,
+		Title:       "the title",
+		Links:       links,
+		ServiceHome: ls.serviceURL,
 	}
 	tmpl.Execute(w, data)
 }
@@ -125,14 +135,14 @@ func (ls linkStore) editHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	ls.writeLinks()
 
-	http.Redirect(w, r, "http://localhost:8080/", http.StatusSeeOther)
+	http.Redirect(w, r, ls.serviceURL, http.StatusSeeOther)
 }
 
 func (ls linkStore) deleteHandler(w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	ls.deleteLink(Link{URL: url})
 	ls.writeLinks()
-	http.Redirect(w, r, "http://localhost:8080/", http.StatusSeeOther)
+	http.Redirect(w, r, ls.serviceURL, http.StatusSeeOther)
 }
 
 func (ls linkStore) addHandler(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +164,7 @@ func (ls linkStore) addHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	ls.writeLinks()
 
-	http.Redirect(w, r, "http://localhost:8080/", http.StatusSeeOther)
+	http.Redirect(w, r, ls.serviceURL, http.StatusSeeOther)
 }
 
 func (ls linkStore) listHandler(w http.ResponseWriter, r *http.Request) {
@@ -165,11 +175,13 @@ func (ls linkStore) listHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title string
-		Links []Link
+		Title       string
+		Links       []Link
+		ServiceHome string
 	}{
-		Title: "the title",
-		Links: links,
+		Title:       "the title",
+		Links:       links,
+		ServiceHome: ls.serviceURL,
 	}
 	tmpl.Execute(w, data)
 }
