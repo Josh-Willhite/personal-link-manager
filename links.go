@@ -48,6 +48,7 @@ func main() {
 }
 
 func (ls linkStore) searchHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("%s: searchHandler: %+v\n", time.Now(), r)
 	var links []Link
 	query := r.URL.Query()
 	tag := query.Get("tag")
@@ -117,6 +118,7 @@ func (ls linkStore) searchTags(searchTag string) []Link {
 }
 
 func (ls linkStore) editHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("%s: editHandler: %+v\n", time.Now(), r)
 	url := r.FormValue("url")
 	tmpl := template.Must(template.ParseFiles(ls.editHTML))
 
@@ -139,6 +141,7 @@ func (ls linkStore) editHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ls linkStore) deleteHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("%s: deleteHandler: %+v\n", time.Now(), r)
 	url := r.FormValue("url")
 	ls.deleteLink(Link{URL: url})
 	ls.writeLinks()
@@ -146,6 +149,7 @@ func (ls linkStore) deleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ls linkStore) addHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("%s: addHandler: %+v\n", time.Now(), r)
 	tmpl := template.Must(template.ParseFiles("add.html"))
 
 	if r.Method != http.MethodPost {
@@ -168,6 +172,7 @@ func (ls linkStore) addHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ls linkStore) listHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("%s: listHandler: %+v\n", time.Now(), r)
 	tmpl := template.Must(template.ParseFiles(ls.listHTML))
 	links := []Link{}
 	for _, link := range ls.links {
