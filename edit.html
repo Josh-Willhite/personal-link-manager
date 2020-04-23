@@ -4,8 +4,8 @@
     <label>url:</label><br />
     <input type="text" name="url" value="{{ .URL }}"><br />
     <label>tags:</label><br />
-    <input type="text" name="tags" value="{{ .TagsText }}"><br />
+    <input type="text" name="tags" value="{{ .TagString }}"> <br />
     <label>notes:</label><br />
-    <textarea name="notes" value ="{{ .Notes }}"></textarea><br />
+    <textarea name="notes" rows="10" cols="28" placeholder="{{ .Notes }}"></textarea><br />
     <input type="submit">
 </form>

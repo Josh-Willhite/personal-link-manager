@@ -123,7 +123,14 @@ func (ls linkStore) editHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles(ls.editHTML))
 
 	if r.Method != http.MethodPost {
-		tmpl.Execute(w, ls.links[url])
+		type editData struct {
+			URL       string
+			TagString string
+			Notes     string
+		}
+		link := ls.links[url]
+		tmpl.Execute(w, editData{link.URL, strings.Join(link.Tags, ","), link.Notes})
+		return
 	}
 
 	ls.readLinks()
@@ -135,7 +142,6 @@ func (ls linkStore) editHandler(w http.ResponseWriter, r *http.Request) {
 			Timestamp: time.Now(),
 		},
 	)
-	ls.writeLinks()
 
 	http.Redirect(w, r, ls.serviceURL, http.StatusSeeOther)
 }
@@ -150,7 +156,7 @@ func (ls linkStore) deleteHandler(w http.ResponseWriter, r *http.Request) {
 
 func (ls linkStore) addHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("%s: addHandler: %+v\n", time.Now(), r)
-	tmpl := template.Must(template.ParseFiles("add.html"))
+	tmpl := template.Must(template.ParseFiles(ls.listHTML))
 
 	if r.Method != http.MethodPost {
 		tmpl.Execute(w, nil)
