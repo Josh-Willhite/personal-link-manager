@@ -21,7 +21,18 @@
 *** https://girishjoshi.io/post/implementing-http-basic-authentication-in-golang/
 ** delete links
 *** links should be unique, so we should probably store them as a map?
-* separate internal vs. external representation
-** internally we use map[url.URL]link
-** externally we use []link
-* 
+** search
+*** case insensitive by default
+** redirect and record?
+** cleanup the code
+*** switch to a real backend
+*** more elegant search 
+*** sync-lock
+** web-assembly front-end
+*** why?
+**** suggestive search
+***** this can be done with ajax (async javascript xml)
+****** load just part of a page
+* review other peoples submissions
+** your reviews are compared to others and used to decide if content should be changed
+** once 3 different people have okayed the change you're, the changes are commited

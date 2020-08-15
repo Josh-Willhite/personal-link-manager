@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -28,27 +31,95 @@ type linkStore struct {
 	editHTML   string
 }
 
+type basicAuth struct {
+	users map[string]string
+}
+
 func main() {
 	ls := linkStore{
 		path:       "links.json",
 		listHTML:   "links.html",
 		editHTML:   "edit.html",
 		links:      map[string]Link{},
-		serviceURL: "http://links.joshwillhite.com",
+		serviceURL: "http://localhost:8080",
+		// serviceURL: "http://links.joshwillhite.com",
 	}
 
 	ls.readLinks()
 
-	http.HandleFunc("/", ls.listHandler)
-	http.HandleFunc("/add", ls.addHandler)
-	http.HandleFunc("/delete", ls.deleteHandler)
-	http.HandleFunc("/edit", ls.editHandler)
-	http.HandleFunc("/search", ls.searchHandler)
-	http.ListenAndServe(":8080", nil)
+	bs := basicAuth{
+		users: map[string]string{},
+	}
+
+	bs.loadUsers("users.txt")
+
+	mux := http.NewServeMux()
+
+	mux.Handle("/", http.HandlerFunc(ls.listHandler))
+	mux.Handle("/search", http.HandlerFunc(ls.searchHandler))
+	mux.Handle("/add", bs.basicAuthCheck(http.HandlerFunc(ls.addHandler)))
+	mux.Handle("/delete", bs.basicAuthCheck(http.HandlerFunc(ls.deleteHandler)))
+	mux.Handle("/edit", bs.basicAuthCheck(http.HandlerFunc(ls.editHandler)))
+
+	http.ListenAndServe(":8080", mux)
+}
+
+func (bs basicAuth) loadUsers(usersPath string) {
+	file, err := os.Open(usersPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		// using ':' in a password is going to be problematic, not a general solution
+		creds := strings.Split(scanner.Text(), ":")
+		bs.users[creds[0]] = creds[1]
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (bs basicAuth) basicAuthCheck(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		encodedAuth, ok := r.Header["Authorization"]
+		if !ok || len(encodedAuth) != 2 {
+			w.Header().Add("WWW-Authenticate", "Basic")
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		decodedAuth, err := base64.StdEncoding.DecodeString(strings.Split(encodedAuth[0], " ")[1])
+		if err != nil {
+			log.Println("failed to decode with: ", err.Error())
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		creds := strings.Split(string(decodedAuth), ":")
+
+		password, ok := bs.users[creds[0]]
+		if !ok {
+			log.Println("user not found: ", creds[0])
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		if creds[1] != password {
+			log.Println("password failed for: ", creds[0])
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (ls linkStore) searchHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s: searchHandler: %+v\n", time.Now(), r)
+	log.Printf("%s: searchHandler: %+v\n", time.Now(), r)
 	var links []Link
 	query := r.URL.Query()
 	tag := query.Get("tag")
@@ -118,7 +189,7 @@ func (ls linkStore) searchTags(searchTag string) []Link {
 }
 
 func (ls linkStore) editHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s: editHandler: %+v\n", time.Now(), r)
+	log.Printf("%s: editHandler: %+v\n", time.Now(), r)
 	url := r.FormValue("url")
 	tmpl := template.Must(template.ParseFiles(ls.editHTML))
 
@@ -147,7 +218,7 @@ func (ls linkStore) editHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ls linkStore) deleteHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s: deleteHandler: %+v\n", time.Now(), r)
+	log.Printf("%s: deleteHandler: %+v\n", time.Now(), r)
 	url := r.FormValue("url")
 	ls.deleteLink(Link{URL: url})
 	ls.writeLinks()
@@ -155,7 +226,7 @@ func (ls linkStore) deleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ls linkStore) addHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s: addHandler: %+v\n", time.Now(), r)
+	log.Printf("%s: addHandler: %+v\n", time.Now(), r)
 	tmpl := template.Must(template.ParseFiles(ls.listHTML))
 
 	if r.Method != http.MethodPost {
@@ -178,7 +249,7 @@ func (ls linkStore) addHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ls linkStore) listHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("%s: listHandler: %+v\n", time.Now(), r)
+	log.Printf("%s: listHandler: %+v\n", time.Now(), r)
 	tmpl := template.Must(template.ParseFiles(ls.listHTML))
 	links := []Link{}
 	for _, link := range ls.links {
