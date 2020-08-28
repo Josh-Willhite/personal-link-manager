@@ -1,13 +1,16 @@
 * Personal Cross Device Link Manager
   Manage your library of links via a self hosted page for consistency and control across devices and browsers.
   
+  [[https://github.com/josh-willhite/personal-link-manager/blob/master/example.jpg?raw=true][Example]]
+  
+  
 * Features
 - Searchable via tags or substring.
 - Extremely minimal design, very easy to understand or extend.
 - Basic Auth is included for mutate actions so it's possible to expose this site to the internet.
 - Backed by a simple json file so data is transportable.
 
-* TODO
+* Next Steps
 - Add mutex protection for writes to json file backing service.
 - Refactor logging.
 - Needs unit tests.
