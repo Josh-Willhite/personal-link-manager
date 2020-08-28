@@ -1,38 +1,15 @@
-* quantified-self
-** first pass accepts a link and some info about the link then writes the info to a json file and publishes to github
-#+begin_src json
-  [
-    {
-        "url": "a valid url",
-        "tags": ["learn", "idea"],
-        "note": "this is a note to my future self",
-        "timestamp": "current time",
-    } 
-  ]
-#+end_src
-* Next steps
-** landing page
-*** list all links
-**** maybe aggregate into categories
-*** link to addLink form
-** search functionality
-*** by tag, url, and notes (fuzzy)
-** basic auth
-*** https://girishjoshi.io/post/implementing-http-basic-authentication-in-golang/
-** delete links
-*** links should be unique, so we should probably store them as a map?
-** search
-*** case insensitive by default
-** redirect and record?
-** cleanup the code
-*** switch to a real backend
-*** more elegant search 
-*** sync-lock
-** web-assembly front-end
-*** why?
-**** suggestive search
-***** this can be done with ajax (async javascript xml)
-****** load just part of a page
-* review other peoples submissions
-** your reviews are compared to others and used to decide if content should be changed
-** once 3 different people have okayed the change you're, the changes are commited
+* Personal Cross Device Link Manager
+  Manage your library of links via a self hosted page for consistency and control across devices and browsers.
+  
+* Features
+- Searchable via tags or substring.
+- Extremely minimal design, very easy to understand or extend.
+- Basic Auth is included for mutate actions so it's possible to expose this site to the internet.
+- Backed by a simple json file so data is transportable.
+
+* TODO
+- Add mutex protection for writes to json file backing service.
+- Refactor logging.
+- Needs unit tests.
+- Documentation around usage.
+
