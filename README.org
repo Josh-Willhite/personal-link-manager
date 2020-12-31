@@ -14,5 +14,12 @@
 - Add mutex protection for writes to json file backing service.
 - Refactor logging.
 - Needs unit tests.
-- Documentation around usage.
+- Documentation around everything
+- Switch to key/value backend
+  + brings some interesting challenges around search/indexing
 
+
+* Future
+Work towards making this a crowd sourced solution for curating the web.
+
+Maybe a bunch of people could run their own services, there needs to be some protocol/standard for sharing link meta data.
