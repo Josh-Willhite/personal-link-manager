@@ -19,9 +19,11 @@
   + brings some interesting challenges around search/indexing
 
 
-* Future
+* Ideas
 Work towards making this a crowd sourced solution for curating the web.
 
 Maybe a bunch of people could run their own services, there needs to be some protocol/standard for sharing link meta data.
 
 Need to have a way to validate contributions, each person could be asked to moderate a given number of other contributions with some known bad contributions included. If they successfully identify the known bad contributions it could be assumed that their contribution is good. There could be some threshold of reviews before a contribution is committed.
+
+Combine above with ML to classify new sites, basicaly have users train and refine a model.
